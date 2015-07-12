@@ -5,10 +5,9 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   belongs_to :plan
   attr_accessor :stripe_card_token
-  
   def save_with_payment
-    if valid? # if we add validations to the form, this will check them
-      customer = Stripe::Customer.create(description: email, plan: plan_id, card: stripe_card_token)
+    if valid?
+      customer = Stripe::Customer.create(description: email, plan: plan_id, source: stripe_card_token)
       self.stripe_customer_token = customer.id
       save!
     end
